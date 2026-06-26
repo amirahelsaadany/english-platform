@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}ملفي الشخصي{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.page-title{font-family:'Amiri',serif;font-size:26px;color:var(--tx);margin-bottom:1.5rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.photo-boxes{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.photo-box{border:1.5px dashed var(--bd2);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;background:#fff;}
+.photo-box:hover{border-color:var(--blue);background:var(--blue-bg);}
+.photo-box.has-img{border-style:solid;border-color:var(--blue-bd);}
+.photo-preview{width:100%;height:150px;object-fit:cover;border-radius:8px;display:block;margin-bottom:.5rem;}
+.ph{height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;}
+.ph .ic{font-size:26px;}
+.ph p{font-size:16px;color:var(--tx2);font-weight:500;}
+.ph small{font-size:16px;color:var(--tx3);}
+.photo-label{font-size:17px;font-weight:500;color:var(--tx);margin-bottom:.6rem;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link {% if request.endpoint == 'teacher_courses' %}active{% endif %}"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link {% if request.endpoint == 'new_course' %}active{% endif %}"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link {% if request.endpoint == 'teacher_live' %}active{% endif %}"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link {% if request.endpoint == 'teacher_announcements' %}active{% endif %}"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link {% if request.endpoint == 'teacher_students' %}active{% endif %}"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+    <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link {% if request.endpoint == 'teacher_site_content' %}active{% endif %}"><span class="ic">🎨</span>محتوى الموقع</a>
+<div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link {% if request.endpoint == 'teacher_profile' %}active{% endif %}"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat,msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  <div class="page-title">ملفي الشخصي</div>
+  <form method="POST" enctype="multipart/form-data" style="max-width:680px;">
+
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="font-size:17px;font-weight:500;margin-bottom:1rem;">📸 الصور</div>
+      <div class="photo-boxes">
+        <div>
+          <div class="photo-label">🖼 صورة الصفحة الرئيسية</div>
+          <div class="photo-box {% if current_user.hero_photo %}has-img{% endif %}" id="heroBox" onclick="document.getElementById('heroInput').click()">
+            {% if current_user.hero_photo %}
+              <img id="heroPreview" src="{{ url_for('static', filename=current_user.hero_photo) }}" class="photo-preview">
+              <div style="font-size:17px;color:var(--blue);">✓ اضغط للتغيير</div>
+            {% else %}
+              <div class="ph" id="heroPH"><span class="ic">🖼</span><p>اضغط للرفع</p><small>تظهر في الصفحة الرئيسية</small></div>
+              <img id="heroPreview2" src="" class="photo-preview" style="display:none">
+            {% endif %}
+          </div>
+          <input type="file" id="heroInput" name="hero_photo" accept="image/*" style="display:none" onchange="previewPhoto(this,'heroPreview','heroBox','heroPH')">
+        </div>
+        <div>
+          <div class="photo-label">👤 الصورة الشخصية</div>
+          <div class="photo-box {% if current_user.avatar %}has-img{% endif %}" id="avatarBox" onclick="document.getElementById('avatarInput').click()">
+            {% if current_user.avatar %}
+              <img id="avatarPreview3" src="{{ url_for('static', filename=current_user.avatar) }}" class="photo-preview">
+              <div style="font-size:17px;color:var(--blue);">✓ اضغط للتغيير</div>
+            {% else %}
+              <div class="ph" id="avatarPH"><span class="ic">👨‍🏫</span><p>اضغط للرفع</p><small>صورتك الشخصية</small></div>
+              <img id="avatarPreview" src="" class="photo-preview" style="display:none">
+            {% endif %}
+          </div>
+          <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none" onchange="previewPhoto(this,'avatarPreview','avatarBox','avatarPH')">
+        </div>
+      </div>
+      <div id="photoHint" style="display:none;font-size:16px;color:var(--blue);background:var(--blue-bg);border:0.5px solid var(--blue-bd);border-radius:8px;padding:.6rem .9rem;">
+        📌 Click <strong>حفظ التغييرات</strong> below to upload the photo
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="font-size:17px;font-weight:500;margin-bottom:1rem;">📋 المعلومات الشخصية</div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">الاسم الكامل</label>
+          <input type="text" name="name" class="form-input" value="{{ current_user.name }}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني</label>
+          <input type="email" name="email" class="form-input" value="{{ current_user.email }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الهاتف</label>
+          <input type="text" name="phone" class="form-input" value="{{ current_user.phone }}" placeholder="+966 5xx xxx xxxx">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 واتساب (يظهر في صفحة التواصل)</label>
+          <input type="text" name="whatsapp" class="form-input" value="{{ current_user.whatsapp }}" placeholder="+966 5xx xxx xxxx">
+        </div>
+        <div class="form-group">
+          <label class="form-label">✈️ تيليجرام (يظهر في صفحة التواصل)</label>
+          <input type="text" name="telegram" class="form-input" value="{{ current_user.telegram }}" placeholder="@username">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">نبذة</label>
+          <textarea name="bio" class="form-input" rows="3" placeholder="عن خبرتك التعليمية وشهاداتك...">{{ current_user.bio }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="font-size:20px;font-weight:700;margin-bottom:1.25rem;color:var(--blue);">💳 معلومات الدفع</div>
+      <div style="font-size:17px;color:var(--tx3);margin-bottom:1.25rem;">هذه المعلومات ستظهر للطلاب عند الاشتراك في الدورات المدفوعة — تأكد من دقتها.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">🏦 اسم البنك</label>
+          <input type="text" name="bank_name" class="form-input" value="{{ current_user.bank_name }}" placeholder="مثال: بنك أوف أمريكا / HSBC">
+        </div>
+        <div class="form-group">
+          <label class="form-label">🔢 رقم الحساب / IBAN</label>
+          <input type="text" name="bank_account" class="form-input" value="{{ current_user.bank_account }}" placeholder="رقم الحساب أو IBAN">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📱 فودافون كاش</label>
+          <input type="text" name="wallet_vodafone" class="form-input" value="{{ current_user.wallet_vodafone }}" placeholder="رقم المحفظة">
+        </div>
+        <div class="form-group">
+          <label class="form-label">⚡ إنستا باي</label>
+          <input type="text" name="wallet_instapay" class="form-input" value="{{ current_user.wallet_instapay }}" placeholder="إنستا باي link or ID">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📲 STC Pay</label>
+          <input type="text" name="wallet_stcpay" class="form-input" value="{{ current_user.wallet_stcpay }}" placeholder="رقم STC Pay">
+        </div>
+        <div class="form-group">
+          <label class="form-label">💰 محفظة أخرى / باي بال / بنك رقمي</label>
+          <input type="text" name="wallet_other" class="form-input" value="{{ current_user.wallet_other }}" placeholder="رابط أو رقم لمحفظة أخرى">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">📝 تعليمات دفع إضافية</label>
+          <textarea name="payment_notes" class="form-input" rows="3" placeholder="مثال: يرجى إرسال إيصال التحويل عبر واتساب لتفعيل الاشتراك...">{{ current_user.payment_notes }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="font-size:18px;font-weight:600;margin-bottom:1rem;">🔐 تغيير كلمة المرور</div>
+      <div class="form-group" style="max-width:300px;">
+        <label class="form-label">كلمة المرور الجديدة (اتركه فارغاً للاحتفاظ بالحالي)</label>
+        <input type="password" name="new_password" class="form-input" placeholder="••••••••">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;align-items:center;">
+      <button type="submit" class="btn btn-primary" style="padding:.9rem 2.5rem;font-size:17px;">💾 حفظ التغييرات</button>
+      <a href="{{ url_for('contact') }}" target="_blank" class="btn btn-ghost">👁 معاينة صفحة التواصل</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function previewPhoto(input, previewId, boxId, placeholderId) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 10 * 1024 * 1024) { alert('Image larger than 10MB'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById(previewId);
+    const ph = document.getElementById(placeholderId);
+    const box = document.getElementById(boxId);
+    if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+    if (ph) ph.style.display = 'none';
+    if (box) box.classList.add('has-img');
+    document.getElementById('photoHint').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+{% endblock %}

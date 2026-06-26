@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}الطالبs{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.page-title{font-family:'Amiri',serif;font-size:26px;color:var(--tx);margin-bottom:1.5rem;}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:0.5px solid var(--bd);box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+th{background:var(--bg3);font-size:17px;color:var(--tx2);font-weight:500;padding:.7rem 1rem;text-align:right;border-bottom:0.5px solid var(--bd);}
+td{font-size:16px;color:var(--tx);padding:.7rem 1rem;border-bottom:0.5px solid var(--bd);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg);}
+.progress-bar{height:5px;background:var(--bg3);border-radius:2px;min-width:80px;}
+.progress-fill{height:100%;background:var(--gradient-blue);border-radius:2px;}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--blue);}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link {% if request.endpoint == 'teacher_courses' %}active{% endif %}"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link {% if request.endpoint == 'new_course' %}active{% endif %}"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link {% if request.endpoint == 'teacher_live' %}active{% endif %}"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link {% if request.endpoint == 'teacher_announcements' %}active{% endif %}"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link {% if request.endpoint == 'teacher_students' %}active{% endif %}"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+    <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link {% if request.endpoint == 'teacher_site_content' %}active{% endif %}"><span class="ic">🎨</span>محتوى الموقع</a>
+<div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link {% if request.endpoint == 'teacher_profile' %}active{% endif %}"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat,msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}{% endwith %}
+  <div class="page-title">إدارة الطلاب</div>
+  <table>
+    <thead>
+      <tr><th>الطالب</th><th>الدورة</th><th>تاريخ التسجيل</th><th>التقدم</th><th>الحالة</th><th>الإجراء</th></tr>
+    </thead>
+    <tbody>
+    {% for e, user, course in enrollments %}
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <div class="avatar">{{ user.name[0] }}</div>
+          <div><div style="font-weight:500;">{{ user.name }}</div><div style="font-size:16px;color:var(--tx3);">{{ user.email }}</div></div>
+        </div>
+      </td>
+      <td>{{ course.title }}</td>
+      <td style="font-size:17px;color:var(--tx3);">{{ e.enrolled_at.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div class="progress-bar"><div class="progress-fill" style="width:{{ get_progress_pct(course.id, user.id) }}%"></div></div>
+          <span style="font-size:16px;color:var(--tx3);">{{ get_progress_pct(course.id, user.id) }}%</span>
+        </div>
+      </td>
+      <td><span class="badge {% if e.is_approved %}badge-blue{% else %}badge-gold{% endif %}">{% if e.is_approved %}معتمد{% else %}معلق{% endif %}</span></td>
+      <td>
+        {% if not e.is_approved %}
+        <form method="POST" action="{{ url_for('approve_enrollment', enroll_id=e.id) }}">
+          <button class="btn btn-primary btn-sm">اعتماد</button>
+        </form>
+        {% else %}
+        <span style="font-size:17px;color:var(--tx3);">—</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3);">لم يسجل أي طالب بعد.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

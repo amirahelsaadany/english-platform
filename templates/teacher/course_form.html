@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}دورة جديدة{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link {% if request.endpoint == 'teacher_courses' %}active{% endif %}"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link {% if request.endpoint == 'new_course' %}active{% endif %}"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link {% if request.endpoint == 'teacher_live' %}active{% endif %}"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link {% if request.endpoint == 'teacher_announcements' %}active{% endif %}"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link {% if request.endpoint == 'teacher_students' %}active{% endif %}"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+    <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link {% if request.endpoint == 'teacher_site_content' %}active{% endif %}"><span class="ic">🎨</span>محتوى الموقع</a>
+<div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link {% if request.endpoint == 'teacher_profile' %}active{% endif %}"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat,msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}{% endwith %}
+  <div style="font-family:'Amiri',serif;font-size:26px;color:var(--tx);margin-bottom:1.5rem;">إنشاء دورة جديدة</div>
+  <div class="card" style="max-width:680px;">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">عنوان الدورة *</label>
+          <input type="text" name="title" class="form-input" placeholder="مثال: أساسيات قواعد الإنجليزية" required>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">وصف الدورة</label>
+          <textarea name="description" class="form-input" rows="3" placeholder="وصف تفصيلي للدورة وما سيتعلمه الطلاب..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">المستوى</label>
+          <select name="level" class="form-input">
+            <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">التصنيف</label>
+          <select name="category" class="form-input">
+            <option>Grammar</option><option>Vocabulary</option><option>Speaking</option><option>Listening</option><option>Writing</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">السعر ($) — 0 للمجانية</label>
+          <input type="number" name="price" class="form-input" value="0" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الصورة المصغرة</label>
+          <input type="file" name="thumbnail" class="form-input" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:16px;color:var(--tx2);">
+            <input type="checkbox" name="is_free"> الدورة مجانية بالكامل
+          </label>
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:16px;color:var(--tx2);">
+            <input type="checkbox" name="is_published"> نشر الدورة الآن
+          </label>
+        </div>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+        <button type="submit" class="btn btn-primary">إنشاء الدورة</button>
+        <a href="{{ url_for('teacher_courses') }}" class="btn btn-ghost">إلغاء</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

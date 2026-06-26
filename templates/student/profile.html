@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}ملفي الشخصي{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-left:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.1rem 1.25rem;border-bottom:0.5px solid var(--bd);}
+.sb-logo .ic{width:36px;height:36px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#FFD700;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:17px;color:var(--gold-d);margin-top:.4rem;}
+.sb-link{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.1rem;font-size:16px;color:var(--tx2);transition:all .15s;border-right:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-right-color:var(--blue);}
+.sb-section{padding:.65rem 1.1rem .2rem;font-size:10px;color:var(--tx3);letter-spacing:.5px;}
+.sb-user{margin-top:auto;padding:.9rem 1.1rem;border-top:0.5px solid var(--bd);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.page-title{font-family:'Amiri',serif;font-size:26px;color:var(--tx);margin-bottom:1.5rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.avatar-circle{width:72px;height:72px;border-radius:50%;background:var(--gradient-blue);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;color:#FFD700;}
+.avatar-circle img{width:100%;height:100%;object-fit:cover;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo"><div class="ic">🎓</div><h2>منصة الأستاذ علاء السعدني </h2><p style="font-size:10px;color:var(--tx3);">بوابة الطالب</p></div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('student_dashboard') }}" class="sb-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}"><span>🏠</span>لوحة التحكم</a>
+  <div class="sb-section">التعلم</div>
+  <a href="{{ url_for('courses_list') }}" class="sb-link {% if request.endpoint == 'courses_list' %}active{% endif %}"><span>🔍</span>تصفح الدورات</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('index') }}#live" class="sb-link"><span>📡</span>الجلسات المباشرة</a>
+  <div class="sb-section">الحساب</div>
+  <a href="{{ url_for('student_profile') }}" class="sb-link {% if request.endpoint == 'student_profile' %}active{% endif %}"><span>👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span>🌐</span>الصفحة الرئيسية</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span>🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div style="font-size:16px;font-weight:500;">{{ current_user.name }}</div>
+    <div style="font-size:16px;color:var(--tx3);">{{ current_user.country }}</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat,msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}{% endwith %}
+  <div class="page-title">ملفي الشخصي</div>
+  <div class="card" style="max-width:580px;">
+    <form method="POST" enctype="multipart/form-data">
+      <div style="display:flex;align-items:center;gap:1.1rem;margin-bottom:1.4rem;padding-bottom:1.4rem;border-bottom:0.5px solid var(--bd);">
+        <div class="avatar-circle">
+          {% if current_user.avatar %}<img src="{{ url_for('static', filename=current_user.avatar) }}" alt="">{% else %}👤{% endif %}
+        </div>
+        <div>
+          <div style="font-size:17px;font-weight:500;">{{ current_user.name }}</div>
+          <div class="badge badge-gray" style="margin-top:.3rem;">طالب</div>
+          <label style="display:inline-block;margin-top:.45rem;font-size:17px;color:var(--blue);cursor:pointer;">
+            📷 تغيير الصورة
+            <input type="file" name="avatar" accept="image/*" style="display:none">
+          </label>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">الاسم الكامل</label>
+          <input type="text" name="name" class="form-input" value="{{ current_user.name }}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" value="{{ current_user.email }}" disabled style="opacity:.6;cursor:not-allowed;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الهاتف</label>
+          <input type="text" name="phone" class="form-input" value="{{ current_user.phone }}" placeholder="+966...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الدولة</label>
+          <select name="country" class="form-input">
+            {% for c in ['Saudi Arabia','Egypt','Kuwait','UAE','Jordan','Morocco','Tunisia','United States','United Kingdom','Other'] %}
+            <option {% if current_user.country==c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">نبذة</label>
+          <textarea name="bio" class="form-input" rows="2" placeholder="نبذة مختصر عن نفسك...">{{ current_user.bio }}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور الجديدة</label>
+          <input type="password" name="new_password" class="form-input" placeholder="اتركه فارغاً للاحتفاظ بالحالي">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:.5rem;">حفظ التغييرات</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

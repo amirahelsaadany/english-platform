@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block title %}تعديل الدورة{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.page-title{font-family:'Amiri',serif;font-size:26px;color:var(--tx);margin-bottom:1.5rem;}
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:0.5px solid var(--bd);padding-bottom:0;}
+.tab-btn{padding:.55rem 1.1rem;font-size:16px;font-family:'Tajawal',sans-serif;background:transparent;border:none;cursor:pointer;color:var(--tx2);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all .2s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.lesson-card{background:#fff;border:0.5px solid var(--bd);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.85rem;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.lesson-num{width:32px;height:32px;background:var(--blue-bg);border:0.5px solid var(--blue-bd);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--blue);flex-shrink:0;}
+.lesson-info{flex:1;}
+.lesson-info h4{font-size:16px;font-weight:500;color:var(--tx);}
+.lesson-info .meta{font-size:16px;color:var(--tx3);}
+.add-lesson-form{background:#fff;border:0.5px solid var(--bd);border-radius:14px;padding:1.5rem;margin-top:1.25rem;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.add-lesson-form h3{font-size:17px;font-weight:500;margin-bottom:1.25rem;color:var(--tx);}
+.upload-area{border:1.5px dashed var(--bd2);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all .2s;}
+.upload-area:hover{border-color:var(--blue);background:var(--blue-bg);}
+.upload-area .ic{font-size:28px;margin-bottom:.5rem;}
+.upload-area p{font-size:16px;color:var(--tx2);}
+.upload-area small{font-size:16px;color:var(--tx3);}
+.student-row{display:flex;align-items:center;justify-content:space-between;padding:.65rem;border:0.5px solid var(--bd);border-radius:8px;background:#fff;margin-bottom:.5rem;}
+.student-row .name{font-size:16px;font-weight:500;}
+.student-row .meta{font-size:16px;color:var(--tx3);}
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;margin-top:.3rem;min-width:80px;}
+.progress-fill{height:100%;background:var(--gradient-blue);border-radius:2px;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link {% if request.endpoint == 'teacher_courses' %}active{% endif %}"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link {% if request.endpoint == 'new_course' %}active{% endif %}"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link {% if request.endpoint == 'teacher_live' %}active{% endif %}"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link {% if request.endpoint == 'teacher_announcements' %}active{% endif %}"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link {% if request.endpoint == 'teacher_students' %}active{% endif %}"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+    <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link {% if request.endpoint == 'teacher_site_content' %}active{% endif %}"><span class="ic">🎨</span>محتوى الموقع</a>
+<div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link {% if request.endpoint == 'teacher_profile' %}active{% endif %}"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <div>
+      <div class="page-title" style="margin-bottom:.2rem;">{{ course.title }}</div>
+      <div style="font-size:16px;color:var(--tx2);">تعديل الدورة وإدارة الدروس</div>
+    </div>
+    <div style="display:flex;gap:.5rem;">
+      <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-ghost btn-sm" target="_blank">معاينة</a>
+      <form action="{{ url_for('delete_course', course_id=course.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this course?');">
+        <button class="btn btn-danger btn-sm">حذف</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('info',this)">معلومات الدورة</button>
+    <button class="tab-btn" onclick="showTab('lessons',this)">الدروس ({{ lessons|length }})</button>
+    <button class="tab-btn" onclick="showTab('students',this)">الطلاب ({{ enrollments|length }})</button>
+  </div>
+
+  <div id="tab-info" class="tab-content active">
+    <div class="card">
+      <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="update">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">عنوان الدورة</label>
+            <input type="text" name="title" class="form-input" value="{{ course.title }}" required>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">وصف الدورة</label>
+            <textarea name="description" class="form-input" rows="3">{{ course.description }}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">المستوى</label>
+            <select name="level" class="form-input">
+              {% for l in ['Beginner','Intermediate','Advanced'] %}
+              <option {% if course.level==l %}selected{% endif %}>{{ l }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">التصنيف</label>
+            <select name="category" class="form-input">
+              {% for c in ['Grammar','Vocabulary','Speaking','Listening','Writing'] %}
+              <option {% if course.category==c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">السعر ($)</label>
+            <input type="number" name="price" class="form-input" value="{{ course.price }}" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label class="form-label">الصورة المصغرة</label>
+            <input type="file" name="thumbnail" class="form-input" accept="image/*">
+            {% if course.thumbnail %}<div style="margin-top:.35rem;font-size:16px;color:var(--blue);">✓ Image exists</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:16px;color:var(--tx2);">
+              <input type="checkbox" name="is_free" {% if course.is_free %}checked{% endif %}> مجانية
+            </label>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:16px;color:var(--tx2);">
+              <input type="checkbox" name="is_published" {% if course.is_published %}checked{% endif %}> منشورة
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="tab-lessons" class="tab-content">
+    {% for lesson in lessons %}
+    <div class="lesson-card">
+      {% if lesson.thumbnail %}
+      <img src="{{ url_for('static', filename=lesson.thumbnail) }}" style="width:60px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;" alt="Lesson thumbnail">
+      {% else %}
+      <div class="lesson-num">{{ lesson.order_num }}</div>
+      {% endif %}
+      <div class="lesson-info">
+        <h4>{{ lesson.title }}</h4>
+        <div class="meta">
+          {% if lesson.video_path %}📹 Uploaded Video{% elif lesson.video_url %}🔗 Video Link{% else %}⏸ No Video{% endif %}
+          {% if lesson.duration %} · {{ lesson.duration }}{% endif %}
+          {% if lesson.materials %}· {{ lesson.materials|length }} attachment{% endif %}
+        </div>
+      </div>
+      {% if lesson.is_free_preview %}<span class="badge badge-blue">مجانية</span>{% endif %}
+      <form action="{{ url_for('delete_lesson', lesson_id=lesson.id) }}" method="POST" onsubmit="return confirm('حذف lesson?');">
+        <button class="btn btn-danger btn-sm">حذف</button>
+      </form>
+    </div>
+    {% else %}
+    <p style="color:var(--tx3);font-size:16px;padding:.5rem 0;">لا توجد دروس بعد. أضف درساً أدناه.</p>
+    {% endfor %}
+
+    <div class="add-lesson-form">
+      <h3>➕ إضافة درس جديد</h3>
+      <form method="POST" action="{{ url_for('new_lesson', course_id=course.id) }}" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">عنوان الدرس *</label>
+            <input type="text" name="title" class="form-input" placeholder="مثال: زمن المضارع البسيط" required>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">وصف الدرس</label>
+            <textarea name="description" class="form-input" rows="2" placeholder="وصف مختصر للدرس..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lesson الصورة المصغرة 🖼</label>
+            <div class="upload-area" onclick="document.getElementById('lessonThumb').click()">
+              <div class="ic">🖼</div>
+              <p>اضغط لاختيار صورة الدرس</p>
+              <small>JPG, PNG, WEBP</small>
+            </div>
+            <input type="file" id="lessonThumb" name="lesson_thumbnail" accept="image/*" style="display:none" onchange="showFileName(this,'thumbName')">
+            <div id="thumbName" style="font-size:16px;color:var(--blue);margin-top:.3rem;"></div>
+          </div>
+          <div class="form-group">
+            <label style="display:block;margin-bottom:8px;">نوع الدرس</label>
+            <select name="lesson_type" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:20px;">
+              <option value="recorded">درس مسجل</option>
+              <option value="live">جلسة مباشرة</option>
+            </select>
+            <label class="form-label">رفع الفيديو (MP4, WebM...)</label>
+            <div class="upload-area" onclick="document.getElementById('videoFile').click()">
+              <div class="ic">🎥</div>
+              <p>اضغط لاختيار الفيديو</p>
+              <small>الحد الأقصى 500 ميجابايت</small>
+            </div>
+            <input type="file" id="videoFile" name="video" accept="video/*" style="display:none" onchange="showFileName(this,'videoName')">
+            <div id="videoName" style="font-size:16px;color:var(--blue);margin-top:.3rem;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">أو رابط الفيديو (YouTube/...)</label>
+            <input type="url" name="video_url" class="form-input" placeholder="https://youtube.com/embed/...">
+            <div class="form-group" style="margin-top:.75rem;">
+              <label class="form-label">المدة</label>
+              <input type="text" name="duration" class="form-input" placeholder="مثال: 45 دقيقة">
+            </div>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">الملحقات (PDF, PPT...)</label>
+            <div class="upload-area" onclick="document.getElementById('matFile').click()">
+              <div class="ic">📎</div>
+              <p>إضافة ملحقات (اختياري)</p>
+              <small>PDF, DOC, PPT, ZIP</small>
+            </div>
+            <input type="file" id="matFile" name="material" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip" style="display:none" onchange="showFileName(this,'matName')">
+            <div id="matName" style="font-size:16px;color:var(--blue);margin-top:.3rem;"></div>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:16px;color:var(--tx2);">
+              <input type="checkbox" name="is_free_preview"> مجانية preview (لا يحتاج تسجيل)
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">إضافة الدرس</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="tab-students" class="tab-content">
+    {% for e in enrollments %}
+    <div class="student-row">
+      <div>
+        <div class="name">{{ e.student.name }}</div>
+        <div class="meta">{{ e.student.email }} · {{ e.student.country }} · {{ e.enrolled_at.strftime('%Y-%m-%d') }}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:{{ get_progress_pct(course.id, e.student_id) }}%"></div></div>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <span style="font-size:17px;color:var(--tx3);">{{ get_progress_pct(course.id, e.student_id) }}%</span>
+        {% if not e.is_approved %}
+          <form action="{{ url_for('approve_enrollment', enroll_id=e.id) }}" method="POST">
+            <button class="btn btn-primary btn-sm">Approve</button>
+          </form>
+        {% else %}
+          <span class="badge badge-blue">Approved</span>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <p style="color:var(--tx3);font-size:16px;padding:1rem 0;">لم يسجل أي طالب بعد.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function showTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function showFileName(input,targetId){
+  const el=document.getElementById(targetId);
+  if(input.files.length>0){
+    el.textContent='✓ '+Array.from(input.files).map(f=>f.name).join(', ');
+  }
+}
+</script>
+{% endblock %}

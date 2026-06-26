@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}أكاديمية الإنجليزية{% endblock %} | تعلم الإنجليزية أونلاين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;
+  --gold-l:#E8C96A;
+  --gold-d:#9A7D2E;
+  --gold-bg:#FFF8E7;
+  --gold-bd:#F0E0B0;
+  --blue:#0A2463;
+  --blue-l:#1A3A7A;
+  --blue-d:#051838;
+  --blue-bg:#E8EEF8;
+  --blue-bd:#B8C8E0;
+  --bg:#F8FAFD;
+  --bg2:#FFFFFF;
+  --bg3:#EDF1F8;
+  --tx:#0A0E1A;
+  --tx2:#4A5570;
+  --tx3:#8A95A8;
+  --bd:#D8DEE8;
+  --bd2:#C0C8D8;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --red-bd:#FECACA;
+  --gradient-blue:linear-gradient(135deg, #0A2463, #1A3A7A);
+  --gradient-gold:linear-gradient(135deg, #C9A84C, #E8C96A);
+  --shadow-blue:0 4px 20px rgba(10,36,99,0.15);
+  --shadow-gold:0 4px 20px rgba(201,168,76,0.25);
+}
+body{font-family:'Tajawal',sans-serif;font-size:18px;background:var(--bg);color:var(--tx);min-height:100vh;direction:rtl;text-align:right;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.4rem;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:500;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--gradient-blue);color:#fff;}
+.btn-primary:hover{background:var(--blue-l);transform:translateY(-1px);box-shadow:var(--shadow-blue);}
+.btn-gold{background:var(--gradient-gold);color:var(--blue-d);}
+.btn-gold:hover{background:var(--gold-d);color:#fff;transform:translateY(-1px);box-shadow:var(--shadow-gold);}
+.btn-ghost{background:transparent;border:0.5px solid var(--bd2);color:var(--tx2);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+.btn-danger{background:#fee2e2;color:var(--red);border:0.5px solid var(--red-bd);}
+.btn-danger:hover{background:#fecaca;}
+.btn-sm{padding:.4rem 1rem;font-size:15px;}
+.btn-lg{padding:1rem 2.5rem;font-size:19px;}
+.card{background:#fff;border:0.5px solid var(--bd);border-radius:14px;padding:1.5rem;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.card:hover{box-shadow:0 4px 16px rgba(10,36,99,0.08);}
+.badge{display:inline-block;padding:.25rem .75rem;border-radius:6px;font-size:13px;font-weight:500;}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:0.5px solid var(--blue-bd);}
+.badge-gold{background:var(--gold-bg);color:var(--gold-d);border:0.5px solid var(--gold-bd);}
+.badge-red{background:var(--red-bg);color:var(--red);border:0.5px solid var(--red-bd);}
+.badge-gray{background:#f3f4f6;color:#6b7280;border:0.5px solid #e5e7eb;}
+.flash{padding:.85rem 1.1rem;border-radius:8px;margin:.5rem 0;font-size:17px;}
+.flash-success{background:#f0fdf4;color:#166534;border:0.5px solid #bbf7d0;}
+.flash-error{background:var(--red-bg);color:var(--red);border:0.5px solid var(--red-bd);}
+.flash-info{background:#eff6ff;color:#1d4ed8;border:0.5px solid #bfdbfe;}
+.form-group{margin-bottom:1.1rem;}
+.form-label{display:block;font-size:17px;color:var(--tx2);margin-bottom:.4rem;font-weight:500;}
+.form-input{width:100%;padding:.75rem 1rem;border:0.5px solid var(--bd2);border-radius:8px;font-family:'Tajawal',sans-serif;font-size:17px;background:#fff;color:var(--tx);outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(10,36,99,0.08);}
+textarea.form-input{resize:vertical;min-height:100px;}
+select.form-input{cursor:pointer;}
+.divider{height:0.5px;background:var(--bd);margin:1.25rem 0;}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+<script>
+setTimeout(()=>{document.querySelectorAll('.flash').forEach(e=>e.style.opacity='0')},4000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}دوراتي{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+.page-title{font-family:'Amiri',serif;font-size:28px;color:var(--tx);}
+.page-sub{font-size:16px;color:var(--tx2);margin-top:.25rem;}
+
+.stats-bar{display:flex;gap:1rem;margin-bottom:2rem;}
+.stat-pill{background:#fff;border:0.5px solid var(--bd);border-radius:10px;padding:.75rem 1.25rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.stat-pill .ic{width:36px;height:36px;border-radius:8px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.stat-pill .val{font-size:20px;font-weight:700;color:var(--blue);}
+.stat-pill .lbl{font-size:14px;color:var(--tx3);}
+
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;}
+.course-card{background:#fff;border:0.5px solid var(--bd);border-radius:16px;overflow:hidden;transition:all .25s;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.course-card:hover{transform:translateY(-4px);border-color:var(--blue-bd);box-shadow:0 8px 24px rgba(10,36,99,0.12);}
+.course-thumb{aspect-ratio:16/9;background:var(--gradient-blue);display:flex;align-items:center;justify-content:center;font-size:40px;color:#FFD700;position:relative;overflow:hidden;}
+.course-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.course-thumb .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.4),transparent);}
+.course-badges{position:absolute;top:12px;left:12px;display:flex;gap:.4rem;}
+.course-body{padding:1.25rem;}
+.course-body h3{font-size:18px;font-weight:600;color:var(--tx);margin-bottom:.4rem;}
+.course-meta{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
+.course-meta span{font-size:15px;color:var(--tx3);display:flex;align-items:center;gap:.3rem;}
+.course-stats{display:flex;gap:1.5rem;padding:1rem 0;border-top:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);margin-bottom:1rem;}
+.course-stats .stat{text-align:center;flex:1;}
+.course-stats .stat .num{font-size:20px;font-weight:700;color:var(--blue);}
+.course-stats .stat .lbl{font-size:13px;color:var(--tx3);}
+.course-actions{display:flex;gap:.5rem;}
+.course-actions .btn{flex:1;justify-content:center;}
+
+.empty-state{text-align:center;padding:4rem 2rem;background:#fff;border:0.5px solid var(--bd);border-radius:16px;}
+.empty-state .ic{font-size:56px;margin-bottom:1rem;}
+.empty-state h3{font-size:22px;color:var(--tx);margin-bottom:.5rem;}
+.empty-state p{font-size:16px;color:var(--tx2);margin-bottom:1.5rem;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link {% if request.endpoint == 'teacher_courses' %}active{% endif %}"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link {% if request.endpoint == 'new_course' %}active{% endif %}"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link {% if request.endpoint == 'teacher_live' %}active{% endif %}"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link {% if request.endpoint == 'teacher_announcements' %}active{% endif %}"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link {% if request.endpoint == 'teacher_students' %}active{% endif %}"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+    <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link {% if request.endpoint == 'teacher_site_content' %}active{% endif %}"><span class="ic">🎨</span>محتوى الموقع</a>
+<div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link {% if request.endpoint == 'teacher_profile' %}active{% endif %}"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat,msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}{% endwith %}
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">دوراتي</div>
+      <div class="page-sub">إدارة وتنظيم دوراتك التعليمية</div>
+    </div>
+    <a href="{{ url_for('new_course') }}" class="btn btn-primary">
+      <span>➕</span> دورة جديدة
+    </a>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="ic">📚</div>
+      <div class="info">
+        <div class="val">{{ courses|length }}</div>
+        <div class="lbl">إجمالي الدورات</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div class="ic">✅</div>
+      <div class="info">
+        <div class="val">{{ courses|selectattr('is_published')|list|length }}</div>
+        <div class="lbl">منشورة</div>
+      </div>
+    </div>
+    <div class="stat-pill">
+      <div class="ic">📝</div>
+      <div class="info">
+        <div class="val">{{ courses|selectattr('is_published', 'equalto', false)|list|length }}</div>
+        <div class="lbl">مسودات</div>
+      </div>
+    </div>
+  </div>
+
+  {% if courses %}
+  <div class="courses-grid">
+    {% for course in courses %}
+    <div class="course-card">
+      <div class="course-thumb">
+        {% if course.thumbnail %}
+          <img src="{{ url_for('static', filename=course.thumbnail) }}" alt="{{ course.title }}">
+        {% else %}
+          📚
+        {% endif %}
+        <div class="overlay"></div>
+        <div class="course-badges">
+          {% if course.is_free or course.price == 0 %}
+            <span class="badge badge-blue">مجانية</span>
+          {% else %}
+            <span class="badge badge-gold">{{ course.price|int }} $</span>
+          {% endif %}
+          {% if course.is_published %}
+            <span class="badge badge-blue">منشورة</span>
+          {% else %}
+            <span class="badge badge-gray">مسودة</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="course-body">
+        <h3>{{ course.title }}</h3>
+        <div class="course-meta">
+          <span>📊 {{ course.level }}</span>
+          <span>🏷 {{ course.category }}</span>
+        </div>
+        <div class="course-stats">
+          <div class="stat">
+            <div class="num">{{ course.lessons|length }}</div>
+            <div class="lbl">دروس</div>
+          </div>
+          <div class="stat">
+            <div class="num">{{ course.enrollments|length }}</div>
+            <div class="lbl">طلاب</div>
+          </div>
+          <div class="stat">
+            <div class="num">{{ get_progress_pct(course.id, current_user.id) }}%</div>
+            <div class="lbl">تقدم</div>
+          </div>
+        </div>
+        <div class="course-actions">
+          <a href="{{ url_for('teacher_course_edit', course_id=course.id) }}" class="btn btn-primary btn-sm">تعديل</a>
+          <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-ghost btn-sm" target="_blank">معاينة</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ic">📚</div>
+    <h3>لا توجد دورات بعد</h3>
+    <p>أنشئ دورتك الأولى وابدأ التعليم</p>
+    <a href="{{ url_for('new_course') }}" class="btn btn-primary">إنشاء دورة جديدة</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,1730 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+{% block extra_head %}
+<style>
+/* ═══ GOOGLE FONTS ═══ */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+
+/* ═══ ROOT VARIABLES - Light Theme ═══ */
+:root {
+  --cream: #FFF8F0;
+  --warm-white: #FFFBF5;
+  --sage: #E8F5E9;
+  --soft-blue: #E3F2FD;
+  --lavender: #F3E5F5;
+  --peach: #FFF3E0;
+  --mint: #E0F7FA;
+  --rose: #FCE4EC;
+  --gold-light: #FFF8E1;
+  --text-dark: #1A1A2E;
+  --text-medium: #4A4A6A;
+  --text-light: #8A8AA3;
+  --gold: #C9A84C;
+  --gold-bright: #FFD700;
+  --blue-deep: #0A2463;
+  --blue-soft: #1E88E5;
+  --coral: #FF7043;
+  --teal: #26A69A;
+  --purple-soft: #7E57C2;
+}
+
+/* ═══ GLOBAL OVERRIDES ═══ */
+body {
+  background: #E8F0FE !important;
+  color: var(--text-dark) !important;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* ═══ MORPHING BLOB BACKGROUND ═══ */
+.blob-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(135deg, #E8F0FE 0%, #D6E4FC 50%, #C5D8FB 100%);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: blobMorph 20s ease-in-out infinite;
+}
+
+.blob-1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #FFE0B2, #FFCC80);
+  top: -10%;
+  right: -5%;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #B2DFDB, #80CBC4);
+  bottom: -10%;
+  left: -5%;
+  animation-delay: -5s;
+}
+
+.blob-3 {
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #F8BBD9, #F48FB1);
+  top: 40%;
+  left: 30%;
+  animation-delay: -10s;
+}
+
+.blob-4 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #C5CAE9, #9FA8DA);
+  bottom: 20%;
+  right: 20%;
+  animation-delay: -15s;
+}
+
+@keyframes blobMorph {
+  0%, 100% { 
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% { 
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: translate(30px, -30px) rotate(90deg) scale(1.1);
+  }
+  50% { 
+    border-radius: 50% 60% 30% 60% / 30% 40% 70% 60%;
+    transform: translate(-20px, 20px) rotate(180deg) scale(0.9);
+  }
+  75% { 
+    border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%;
+    transform: translate(20px, 10px) rotate(270deg) scale(1.05);
+  }
+}
+
+/* Floating geometric shapes */
+.geo-shape {
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.geo-triangle {
+  width: 0;
+  height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid var(--gold);
+  top: 15%;
+  left: 8%;
+  animation: geoFloat 8s ease-in-out infinite;
+}
+
+.geo-circle {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--blue-soft);
+  border-radius: 50%;
+  top: 60%;
+  right: 10%;
+  animation: geoFloat 10s ease-in-out infinite reverse;
+}
+
+.geo-square {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--coral);
+  transform: rotate(45deg);
+  bottom: 25%;
+  left: 15%;
+  animation: geoSpin 12s linear infinite;
+}
+
+.geo-diamond {
+  width: 0;
+  height: 0;
+  border: 30px solid transparent;
+  border-bottom-color: var(--teal);
+  position: relative;
+  top: 30%;
+  right: 20%;
+  animation: geoFloat 6s ease-in-out infinite;
+}
+
+.geo-diamond:after {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 30px;
+  width: 0;
+  height: 0;
+  border: 30px solid transparent;
+  border-top-color: var(--teal);
+}
+
+@keyframes geoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+@keyframes geoSpin {
+  0% { transform: rotate(45deg); }
+  100% { transform: rotate(405deg); }
+}
+
+/* ═══ WAVY NAVIGATION ═══ */
+.wavy-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 3rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.wavy-nav.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.nav-logo-wavy {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.logo-blob {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.3);
+  animation: logoBlob 4s ease-in-out infinite;
+}
+
+@keyframes logoBlob {
+  0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+}
+
+.nav-logo-wavy h1 {
+  font-family: 'Amiri', serif;
+  font-size: 24px;
+  color: var(--blue-deep);
+  margin: 0;
+}
+
+.nav-logo-wavy p {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.nav-links-wavy {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-links-wavy a {
+  font-size: 16px;
+  color: var(--text-medium);
+  text-decoration: none;
+  position: relative;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links-wavy a::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.nav-links-wavy a:hover {
+  color: var(--blue-deep);
+}
+
+.nav-links-wavy a:hover::before {
+  width: 100%;
+}
+
+.nav-btns-wavy {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-wavy {
+  padding: 0.7rem 1.8rem;
+  border-radius: 50px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-wavy-outline {
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--blue-deep);
+}
+
+.btn-wavy-outline:hover {
+  background: var(--gold);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.3);
+}
+
+.btn-wavy-solid {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: var(--blue-deep);
+  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+}
+
+.btn-wavy-solid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(201, 168, 76, 0.4);
+}
+
+/* ═══ HERO - Split Screen with Wave ═══ */
+.hero-wave {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 8rem 3rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-wave-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.hero-wave-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--peach), var(--gold-light));
+  border: 2px solid var(--gold);
+  border-radius: 50px;
+  padding: 0.6rem 1.5rem;
+  font-size: 15px;
+  color: var(--blue-deep);
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.hero-tag .live-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--coral);
+  border-radius: 50%;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 112, 67, 0.4); }
+  50% { opacity: 0.7; transform: scale(0.8); box-shadow: 0 0 0 10px rgba(255, 112, 67, 0); }
+}
+
+.hero-wave-title {
+  font-family: 'Amiri', serif;
+  font-size: 72px;
+  line-height: 1.1;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+.hero-wave-title .gradient-text {
+  background: linear-gradient(135deg, var(--blue-deep), var(--blue-soft), var(--teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.hero-wave-title .gradient-text::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--gold), var(--coral), var(--gold));
+  border-radius: 3px;
+  opacity: 0.6;
+}
+
+.hero-wave-desc {
+  font-size: 19px;
+  color: var(--text-medium);
+  line-height: 2;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-wave-btns {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+}
+
+.btn-hero-wavy {
+  padding: 1.1rem 2.5rem;
+  border-radius: 50px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-hero-wavy-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright), var(--coral));
+  background-size: 200% 200%;
+  color: white;
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.4);
+  animation: gradientMove 3s ease infinite;
+}
+
+@keyframes gradientMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.btn-hero-wavy-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(201, 168, 76, 0.5);
+}
+
+.btn-hero-wavy-secondary {
+  background: white;
+  color: var(--blue-deep);
+  border: 2px solid var(--blue-soft);
+  box-shadow: 0 4px 20px rgba(30, 136, 229, 0.1);
+}
+
+.btn-hero-wavy-secondary:hover {
+  background: var(--soft-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(30, 136, 229, 0.2);
+}
+
+/* Wave stats */
+.hero-wave-stats {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.stat-wave {
+  background: white;
+  border-radius: 20px;
+  padding: 1.2rem 1.8rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.stat-wave:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+  box-shadow: 0 15px 40px rgba(201, 168, 76, 0.15);
+}
+
+.stat-wave h3 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--blue-deep);
+  margin: 0 0 0.3rem 0;
+}
+
+.stat-wave p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Hero Visual - Asymmetric Card */
+.hero-wave-visual {
+  position: relative;
+  perspective: 1000px;
+}
+
+.teacher-card-wave {
+  background: white;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+  transform: rotate(-3deg);
+  transition: transform 0.5s ease;
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.teacher-card-wave:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.teacher-card-wave::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+  opacity: 0;
+  z-index: 10;
+}
+
+.teacher-card-wave:hover::before {
+  opacity: 1;
+  animation: shineSweep 0.8s ease;
+}
+
+@keyframes shineSweep {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.teacher-image-container {
+  width: 100%;
+  background: linear-gradient(135deg, var(--soft-blue), var(--lavender), var(--peach));
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px 30px 0 0;
+}
+
+.teacher-image-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, white, transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.teacher-full-img {
+  width: 100%;
+  height: auto;
+  max-height: 450px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border-radius: 30px 30px 0 0;
+}
+
+.teacher-placeholder-wave {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  z-index: 2;
+}
+
+.teacher-placeholder-wave .ic {
+  font-size: 100px;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.1));
+}
+
+.teacher-placeholder-wave p {
+  font-size: 16px;
+  color: var(--text-light);
+}
+
+.teacher-info-wave {
+  padding: 1.5rem 2rem;
+}
+
+.teacher-name-wave {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.teacher-title-wave {
+  font-size: 16px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+.teacher-bio-wave {
+  font-size: 15px;
+  color: var(--text-medium);
+  line-height: 1.7;
+  border-top: 2px solid var(--cream);
+  padding-top: 0.8rem;
+}
+
+.teacher-badge-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, var(--gold-light), var(--peach));
+  color: var(--blue-deep);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  margin-top: 0.8rem;
+  border: 2px solid var(--gold);
+}
+
+/* Decorative dots */
+.deco-dots {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-image: radial-gradient(circle, var(--gold) 2px, transparent 2px);
+  background-size: 15px 15px;
+  opacity: 0.3;
+}
+
+.dots-1 {
+  top: -20px;
+  right: -30px;
+  animation: dotsFloat 6s ease-in-out infinite;
+}
+
+.dots-2 {
+  bottom: -30px;
+  left: -20px;
+  animation: dotsFloat 8s ease-in-out infinite reverse;
+}
+
+@keyframes dotsFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* ═══ QUOTE - Bordered Box ═══ */
+.quote-wave {
+  padding: 5rem 3rem;
+  position: relative;
+}
+
+.quote-box {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 30px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  position: relative;
+  border: 3px solid transparent;
+  border-image: linear-gradient(135deg, var(--gold), var(--coral), var(--teal), var(--blue-soft)) 1;
+  border-radius: 30px;
+}
+
+.quote-box::before {
+  content: '"';
+  font-family: 'Amiri', serif;
+  font-size: 150px;
+  color: var(--gold);
+  opacity: 0.2;
+  position: absolute;
+  top: -20px;
+  right: 30px;
+  line-height: 1;
+}
+
+.quote-text-wave {
+  font-family: 'Amiri', serif;
+  font-size: 28px;
+  color: var(--text-dark);
+  line-height: 1.8;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.quote-author-wave {
+  font-size: 18px;
+  color: var(--text-light);
+  text-align: center;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+
+/* ═══ FEATURES - Colorful Cards ═══ */
+.features-wave {
+  padding: 6rem 3rem;
+  position: relative;
+}
+
+.section-header-wave {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-tag-wave {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--peach), var(--gold-light));
+  border: 2px solid var(--gold);
+  color: var(--blue-deep);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  margin-bottom: 1rem;
+}
+
+.section-title-wave {
+  font-family: 'Amiri', serif;
+  font-size: 48px;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.section-title-wave span {
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-desc-wave {
+  font-size: 18px;
+  color: var(--text-medium);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.features-grid-wave {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card-wave {
+  background: white;
+  border-radius: 25px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  border: 2px solid transparent;
+}
+
+.feature-card-wave::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+  border-radius: 0 0 25px 25px;
+}
+
+.feature-card-wave:hover::after {
+  transform: scaleX(1);
+}
+
+.feature-card-wave:hover {
+  transform: translateY(-10px);
+  border-color: var(--gold);
+  box-shadow: 0 25px 60px rgba(201, 168, 76, 0.15);
+}
+
+.feature-icon-wave {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.feature-icon-wave.gold {
+  background: linear-gradient(135deg, var(--gold-light), var(--peach));
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.2);
+}
+
+.feature-icon-wave.blue {
+  background: linear-gradient(135deg, var(--soft-blue), var(--lavender));
+  box-shadow: 0 8px 25px rgba(30, 136, 229, 0.2);
+}
+
+.feature-icon-wave.purple {
+  background: linear-gradient(135deg, var(--lavender), var(--rose));
+  box-shadow: 0 8px 25px rgba(126, 87, 194, 0.2);
+}
+
+.feature-icon-wave.teal {
+  background: linear-gradient(135deg, var(--mint), var(--sage));
+  box-shadow: 0 8px 25px rgba(38, 166, 154, 0.2);
+}
+
+.feature-icon-wave.coral {
+  background: linear-gradient(135deg, var(--peach), var(--rose));
+  box-shadow: 0 8px 25px rgba(255, 112, 67, 0.2);
+}
+
+.feature-icon-wave.green {
+  background: linear-gradient(135deg, var(--sage), var(--mint));
+  box-shadow: 0 8px 25px rgba(129, 199, 132, 0.2);
+}
+
+.feature-card-wave h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.8rem;
+}
+
+.feature-card-wave p {
+  font-size: 16px;
+  color: var(--text-medium);
+  line-height: 1.8;
+}
+
+/* ═══ COURSES - Masonry Style ═══ */
+.courses-wave {
+  padding: 6rem 3rem;
+  position: relative;
+}
+
+.courses-grid-wave {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.course-card-wave {
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  border: 2px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+}
+
+.course-card-wave:nth-child(odd) {
+  transform: translateY(20px);
+}
+
+.course-card-wave:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: var(--gold);
+  box-shadow: 0 25px 60px rgba(201, 168, 76, 0.15);
+}
+
+.course-card-wave:nth-child(odd):hover {
+  transform: translateY(-10px) scale(1.02);
+}
+
+.course-thumb-wave {
+  aspect-ratio: 16/10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.course-thumb-wave img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  transition: transform 0.5s ease;
+}
+
+.course-card-wave:hover .course-thumb-wave img {
+  transform: scale(1.1);
+}
+
+.course-thumb-wave .overlay-wave {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+}
+
+.course-badge-wave {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.badge-free-wave {
+  background: linear-gradient(135deg, var(--sage), var(--mint));
+  color: var(--teal);
+  border: 2px solid var(--teal);
+}
+
+.badge-paid-wave {
+  background: linear-gradient(135deg, var(--gold-light), var(--peach));
+  color: var(--blue-deep);
+  border: 2px solid var(--gold);
+}
+
+.course-body-wave {
+  padding: 1.5rem;
+}
+
+.course-body-wave h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.course-meta-wave {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.course-footer-wave {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 2px solid var(--cream);
+}
+
+.course-stars-wave {
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.course-price-wave {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--blue-deep);
+}
+
+/* ═══ LIVE SESSIONS - Cards with Icons ═══ */
+.live-wave {
+  padding: 6rem 3rem;
+  position: relative;
+}
+
+.live-grid-wave {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.live-card-wave {
+  background: white;
+  border-radius: 25px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.live-card-wave::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--coral), var(--gold), var(--teal));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.live-card-wave:hover::before {
+  opacity: 1;
+}
+
+.live-card-wave:hover {
+  transform: translateY(-8px);
+  border-color: var(--coral);
+  box-shadow: 0 20px 50px rgba(255, 112, 67, 0.1);
+}
+
+.live-date-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--soft-blue), var(--lavender));
+  color: var(--blue-soft);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  margin-bottom: 1rem;
+}
+
+.live-title-wave {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.live-time-wave {
+  font-size: 15px;
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+}
+
+.btn-join-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: linear-gradient(135deg, var(--coral), #FF8A65);
+  color: white;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 20px rgba(255, 112, 67, 0.3);
+}
+
+.btn-join-wave:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 112, 67, 0.4);
+}
+
+.btn-register-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: white;
+  color: var(--text-medium);
+  border: 2px solid var(--text-light);
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-register-wave:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+  transform: translateY(-2px);
+}
+
+/* ═══ ANNOUNCEMENTS - Sticky Notes Style ═══ */
+.ann-wave {
+  padding: 6rem 3rem;
+  position: relative;
+}
+
+.ann-grid-wave {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ann-card-wave {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border-right: 5px solid var(--gold);
+  position: relative;
+}
+
+.ann-card-wave:nth-child(even) {
+  border-right-color: var(--coral);
+}
+
+.ann-card-wave:nth-child(3n) {
+  border-right-color: var(--teal);
+}
+
+.ann-card-wave:hover {
+  transform: translateX(-10px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+}
+
+.ann-card-wave h4 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.8rem;
+}
+
+.ann-card-wave p {
+  font-size: 16px;
+  color: var(--text-medium);
+  line-height: 1.8;
+}
+
+.ann-date-wave {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ═══ FOOTER - Colorful Blocks ═══ */
+.footer-wave {
+  background: linear-gradient(135deg, var(--blue-deep), #1a237e);
+  padding: 4rem 3rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-wave::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: #E8F0FE;
+  border-radius: 0 0 50% 50%;
+}
+
+.footer-grid-wave {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-brand-wave h2 {
+  font-family: 'Amiri', serif;
+  font-size: 28px;
+  color: var(--gold-bright);
+  margin-bottom: 0.5rem;
+}
+
+.footer-brand-wave p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.8;
+  max-width: 300px;
+}
+
+.footer-col-wave h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-col-wave a {
+  display: block;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.8rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-right: 0;
+}
+
+.footer-col-wave a::before {
+  content: '→';
+  position: absolute;
+  right: -20px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: var(--gold-bright);
+}
+
+.footer-col-wave a:hover {
+  color: var(--gold-bright);
+  padding-right: 20px;
+}
+
+.footer-col-wave a:hover::before {
+  opacity: 1;
+  right: 0;
+}
+
+.footer-bottom-wave {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 3rem;
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══ SCROLL ANIMATIONS ═══ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.8s ease;
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.8s ease;
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.8s ease;
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 1024px) {
+  .hero-wave-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-wave-title {
+    font-size: 52px;
+  }
+
+  .hero-wave-desc {
+    margin: 0 auto 2rem;
+  }
+
+  .hero-wave-btns {
+    justify-content: center;
+  }
+
+  .hero-wave-stats {
+    justify-content: center;
+  }
+
+  .hero-wave-visual {
+    order: -1;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .features-grid-wave {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid-wave {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .wavy-nav {
+    padding: 1rem 1.5rem;
+  }
+
+  .nav-links-wavy {
+    display: none;
+  }
+
+  .hero-wave-title {
+    font-size: 40px;
+  }
+
+  .hero-wave {
+    padding: 7rem 1.5rem 3rem;
+  }
+
+  .features-grid-wave {
+    grid-template-columns: 1fr;
+  }
+
+  .courses-grid-wave {
+    grid-template-columns: 1fr;
+  }
+
+  .live-grid-wave {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid-wave {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .quote-text-wave {
+    font-size: 22px;
+  }
+
+  .section-title-wave {
+    font-size: 36px;
+  }
+}
+
+/* ═══ CUSTOM SCROLLBAR ═══ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold), var(--coral));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-bright), var(--coral));
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<!-- Morphing Blob Background -->
+<div class="blob-container">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<!-- Floating Geometric Shapes -->
+<div class="geo-shape geo-triangle"></div>
+<div class="geo-shape geo-circle"></div>
+<div class="geo-shape geo-square"></div>
+<div class="geo-shape geo-diamond"></div>
+
+<!-- Wavy Navigation -->
+<nav class="wavy-nav" id="mainNav">
+  <div class="nav-logo-wavy">
+    <div class="logo-blob">🎓</div>
+    <div>
+      <h1>{{ get_site_content('footer_brand_name', 'أكاديمية الإنجليزية', 'ar') }}</h1>
+      <p>تعلم الإنجليزية أونلاين</p>
+    </div>
+  </div>
+
+  <div class="nav-links-wavy">
+    <a href="{{ url_for('index') }}">الرئيسية</a>
+    <a href="{{ url_for('courses_list') }}">{{ get_site_content('courses_title', 'الدورات', 'ar') }}</a>
+    <a href="#live">{{ get_site_content('live_title', 'الجلسات المباشرة', 'ar') }}</a>
+    <a href="#announcements">ال{{ get_site_content('announcements_title', 'إعلانات', 'ar') }}</a>
+  </div>
+
+  <div class="nav-btns-wavy">
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('dashboard') }}" class="btn-wavy btn-wavy-solid">لوحة التحكم</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn-wavy btn-wavy-outline">تسجيل الدخول</a>
+      <a href="{{ url_for('register') }}" class="btn-wavy btn-wavy-solid">إنشاء حساب</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Hero Section with Wave -->
+<section class="hero-wave">
+  <div class="hero-wave-grid">
+    <div class="hero-wave-content">
+      <div class="hero-tag">
+        <span class="live-dot"></span>
+        {{ get_site_content('hero_tag', 'منصة تعليمية احترافية', 'ar') }}
+      </div>
+
+      <h1 class="hero-wave-title">
+        {{ get_site_content('hero_title_en', 'Master Your English', 'en') }} <br>
+         <span class="gradient-text">{{ get_site_content('hero_title_ar', 'Be an Expert', 'ar') }}</span>
+      </h1>
+
+      <p class="hero-wave-desc">
+        {{ get_site_content('hero_subtitle', 'منصة شاملة لتعلم الإنجليزية مع معلمين معتمدين، دروس تفاعلية، جلسات مباشرة، ومسارات تعليمية مخصصة.', 'ar') }}
+      </p>
+
+      <div class="hero-wave-btns">
+        <a href="{{ url_for('register') }}" class="btn-hero-wavy btn-hero-wavy-primary">
+          {{ get_site_content('hero_cta_primary', '✨ ابدأ رحلتك', 'ar') }}
+        </a>
+        <a href="{{ url_for('courses_list') }}" class="btn-hero-wavy btn-hero-wavy-secondary">
+          {{ get_site_content('hero_cta_secondary', 'تصفح الدورات', 'ar') }}
+        </a>
+      </div>
+
+      <div class="hero-wave-stats">
+        <div class="stat-wave reveal">
+          <h3>+{{ stats.students }}</h3>
+          <p>طلاب نشطون</p>
+        </div>
+        <div class="stat-wave reveal">
+          <h3>+{{ stats.lessons }}</h3>
+          <p>{{ get_site_content('feature_1_title', 'دروس مسجلة', 'ar') }}</p>
+        </div>
+        <div class="stat-wave reveal">
+          <h3>{{ stats.courses }}</h3>
+          <p>دورات متاحة</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-wave-visual reveal-right">
+      <div class="teacher-card-wave">
+        <div class="deco-dots dots-1"></div>
+        <div class="deco-dots dots-2"></div>
+        <div class="teacher-image-container">
+          {% if teacher and teacher.hero_photo %}
+            <img src="{{ url_for('static', filename=teacher.hero_photo) }}" alt="{{ teacher.name }}" class="teacher-full-img">
+          {% else %}
+            <div class="teacher-placeholder-wave">
+              <span class="ic">👨‍🏫</span>
+              <p>لم يتم رفع صورة بعد</p>
+            </div>
+          {% endif %}
+        </div>
+        <div class="teacher-info-wave">
+          <div class="teacher-name-wave">{% if teacher %}{{ teacher.name }}{% else %}المعلم الرئيسي{% endif %}</div>
+          <div class="teacher-title-wave">معلم إنجليزية ومُدرّب</div>
+          {% if teacher and teacher.bio %}
+            <div class="teacher-bio-wave">{{ teacher.bio }}</div>
+          {% endif %}
+          <div class="teacher-badge-wave">⭐ معلم معتمد</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote Section -->
+<section class="quote-wave">
+  <div class="quote-box reveal-scale">
+    <p class="quote-text-wave">
+      "{{ get_site_content('quote_text', 'التعليم هو جواز السفر للمستقبل، فغداً يعود لمن يُعدّ له اليوم.', 'ar') }}"
+    </p>
+    <p class="quote-author-wave">— {{ get_site_content('quote_author', 'مالكوم إكس', 'ar') }}</p>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-wave">
+  <div class="section-header-wave reveal">
+    <div class="section-tag-wave">{{ get_site_content('features_title', 'ما نقدمه', 'ar') }}</div>
+    <h2 class="section-title-wave">{{ get_site_content("features_title_full", "خدماتنا المميزة", "ar") }}</h2>
+    <p class="section-desc-wave">{{ get_site_content('features_subtitle', 'كل ما تحتاجه لرحلتك في تعلم الإنجليزية في مكان واحد', 'ar') }}</p>
+  </div>
+
+  <div class="features-grid-wave">
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave gold">🎥</div>
+      <h3>{{ get_site_content('feature_1_title', 'دروس مسجلة', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_1_desc', 'مكتبة واسعة من الدروس المسجلة في النحو، المفردات، المحادثة، والاستماع', 'ar') }}</p>
+    </div>
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave blue">📡</div>
+      <h3>{{ get_site_content('feature_2_title', 'جلسات مباشرة', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_2_desc', 'جلسات أسبوعية مباشرة مع المعلمين للتدريب، الأسئلة، وتمارين المحادثة', 'ar') }}</p>
+    </div>
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave purple">📞</div>
+      <h3>{{ get_site_content('feature_3_title', 'شخصي ومجموعات', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_3_desc', 'جلسات فردية مع معلمك وجلسات جماعية للتحفيز', 'ar') }}</p>
+    </div>
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave teal">📊</div>
+      <h3>{{ get_site_content('feature_4_title', 'نحو وكتابة', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_4_desc', 'دورات نحو شاملة وورش كتابة لتطوير مهاراتك', 'ar') }}</p>
+    </div>
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave coral">🏆</div>
+      <h3>{{ get_site_content('feature_5_title', 'دروس الأطفال', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_5_desc', 'جلسات مباشرة للأطفال لتعلم الإنجليزية بطريقة ممتعة', 'ar') }}</p>
+    </div>
+    <div class="feature-card-wave reveal">
+      <div class="feature-icon-wave green">💬</div>
+      <h3>{{ get_site_content('feature_6_title', 'معلمون خبراء', 'ar') }}</h3>
+      <p>{{ get_site_content('feature_6_desc', 'فريق من المعلمين المعتمدين بخبرة سنوات وشهادات دولية', 'ar') }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Courses Section -->
+<section class="courses-wave" id="courses">
+  <div class="section-header-wave reveal">
+    <div class="section-tag-wave">{{ get_site_content('courses_title', 'الدورات', 'ar') }}</div>
+    <h2 class="section-title-wave">{{ get_site_content("courses_title_full", "دوراتنا المتاحة", "ar") }}</h2>
+    <p class="section-desc-wave">{{ get_site_content('courses_subtitle', 'برامج متنوعة لجميع المستويات من المبتدئ إلى المتقدم', 'ar') }}</p>
+  </div>
+
+  <div class="courses-grid-wave">
+    {% set thumbs = ['ct1','ct2','ct3','ct4','ct5','ct6'] %}
+    {% set icons = ['📚','📝','🎯','🗣️','📖','🌟'] %}
+    {% for course in courses %}
+    <a href="{{ url_for('course_detail', course_id=course.id) }}" class="course-card-wave reveal">
+      <div class="course-thumb-wave {{ thumbs[loop.index0 % 6] }}">
+        {% if course.thumbnail %}
+          <img src="{{ url_for('static', filename=course.thumbnail) }}" alt="{{ course.title }}">
+        {% else %}
+          <span style="color:#FFD700;">{{ icons[loop.index0 % 6] }}</span>
+        {% endif %}
+        <div class="overlay-wave"></div>
+        <span class="course-badge-wave {% if course.is_free or course.price==0 %}badge-free-wave{% else %}badge-paid-wave{% endif %}">
+          {% if course.is_free or course.price==0 %}مجانية{% else %}{{ course.price|int }} {% if current_user.is_authenticated %}{{ get_currency(current_user.country) }}{% else %}${% endif %}{% endif %}
+        </span>
+      </div>
+      <div class="course-body-wave">
+        <h3>{{ course.title }}</h3>
+        <div class="course-meta-wave">{{ course.level }} · {{ course.category }}</div>
+        <div class="course-footer-wave">
+          <span class="course-stars-wave">★★★★★</span>
+          <span class="course-price-wave">{% if course.is_free or course.price==0 %}مجانية{% else %}{{ course.price|int }} {% if current_user.is_authenticated %}{{ get_currency(current_user.country) }}{% else %}${% endif %}{% endif %}</span>
+        </div>
+      </div>
+    </a>
+    {% else %}
+    <p style="color:var(--text-light);grid-column:1/-1;text-align:center;padding:3rem;font-size:18px;">لا توجد دورات متاحة بعد</p>
+    {% endfor %}
+  </div>
+
+  <div style="text-align:center;margin-top:3rem;">
+    <a href="{{ url_for('courses_list') }}" class="btn-hero-wavy btn-hero-wavy-secondary" style="display:inline-flex;">
+      عرض جميع {{ get_site_content('courses_title', 'الدورات', 'ar') }} ←
+    </a>
+  </div>
+</section>
+
+<!-- Live Sessions Section -->
+<section class="live-wave" id="live">
+  <div class="section-header-wave reveal">
+    <div class="section-tag-wave">{{ get_site_content('live_title', 'مباشر', 'ar') }}</div>
+    <h2 class="section-title-wave">{{ get_site_content("live_title_full", "الجلسات المباشرة", "ar") }}</h2>
+    <p class="section-desc-wave">{{ get_site_content('live_subtitle', 'جلسات مجدولة أسبوعياً — سجل مقعدك وانضم من أي مكان', 'ar') }}</p>
+  </div>
+
+  <div class="live-grid-wave">
+    {% for ls in live_sessions %}
+    <div class="live-card-wave reveal">
+      <div class="live-date-wave">📅 {{ ls.scheduled_at.strftime('%A') }}</div>
+      <div class="live-title-wave">{{ ls.title }}</div>
+      <div class="live-time-wave">🕐 {{ ls.scheduled_at.strftime('%H:%M') }} · {{ ls.duration_minutes }} دقيقة</div>
+      {% if current_user.is_authenticated and ls.meeting_link %}
+        <a href="{{ ls.meeting_link }}" target="_blank" class="btn-join-wave">انضم الآن →</a>
+      {% else %}
+        <a href="{{ url_for('register') }}" class="btn-register-wave">سجل للانضمام →</a>
+      {% endif %}
+    </div>
+    {% else %}
+    <p style="color:var(--text-light);grid-column:1/-1;text-align:center;padding:2rem;font-size:18px;">لا توجد جلسات مجدولة حالياً</p>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Announcements Section -->
+{% if announcements %}
+<section class="ann-wave" id="announcements">
+  <div class="section-header-wave reveal">
+    <div class="section-tag-wave">{{ get_site_content('announcements_title', 'إعلانات', 'ar') }}</div>
+    <h2 class="section-title-wave">{{ get_site_content("announcements_title_full", "آخر الأخبار", "ar") }}</h2>
+  </div>
+
+  <div class="ann-grid-wave">
+    {% for ann in announcements %}
+    <div class="ann-card-wave reveal">
+      {% if ann.image %}
+        <img src="{{ url_for('static', filename=ann.image) }}" alt="{{ ann.title }}" style="width:100%;border-radius:15px;margin-bottom:1rem;object-fit:cover;max-height:200px;">
+      {% endif %}
+      <h4>{{ ann.title }}</h4>
+      <p>{{ ann.content }}</p>
+      <div class="ann-date-wave">📅 {{ ann.created_at.strftime('%Y-%m-%d') }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Footer -->
+<footer class="footer-wave">
+  <div class="footer-grid-wave">
+    <div class="footer-brand-wave">
+      <h2>{{ get_site_content('footer_brand_name', 'أكاديمية الإنجليزية', 'ar') }}</h2>
+      <p>{{ get_site_content('footer_brand_desc', 'منصة شاملة لتعلم الإنجليزية، تجمع بين التقليد والتكنولوجيا الحديثة', 'ar') }}</p>
+    </div>
+    <div class="footer-col-wave">
+      <h4>المنصة</h4>
+      <a href="{{ url_for('courses_list') }}">{{ get_site_content('courses_title', 'الدورات', 'ar') }}</a>
+      <a href="#live">{{ get_site_content('live_title', 'الجلسات المباشرة', 'ar') }}</a>
+      <a href="{{ url_for('register') }}">إنشاء حساب</a>
+    </div>
+    <div class="footer-col-wave">
+      <h4>الدعم</h4>
+      <a href="#">الأسئلة الشائعة</a>
+      <a href="{{ url_for('contact') }}">اتصل بنا</a>
+    </div>
+    <div class="footer-col-wave">
+      <h4>تابعنا</h4>
+      <a href="#">يوتيوب</a>
+      <a href="#">تيليجرام</a>
+      <a href="#">واتساب</a>
+    </div>
+  </div>
+  <div class="footer-bottom-wave">
+    {{ get_site_content('footer_copyright', 'جميع الحقوق محفوظة © 2026 · أكاديمية الإنجليزية', 'ar') }}
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+});
+
+// Scroll animations with IntersectionObserver
+const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, index * 100);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealElements.forEach(el => observer.observe(el));
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+{% endblock %}

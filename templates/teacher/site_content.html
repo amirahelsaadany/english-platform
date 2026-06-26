@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}إدارة محتوى الموقع{% endblock %}
+{% block extra_head %}
+<style>
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:#fff;border-right:0.5px solid var(--bd);padding:1.5rem 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:0 1.25rem 1.5rem;border-bottom:0.5px solid var(--bd);text-align:center;}
+.sb-logo .ic{width:38px;height:38px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#FFD700;margin:0 auto;}
+.sb-logo h2{font-family:'Amiri',serif;font-size:20px;color:var(--gold-d);margin-top:.5rem;}
+.sb-logo p{font-size:10px;color:var(--tx3);}
+.sb-section{padding:.75rem 1.25rem .25rem;font-size:16px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;}
+.sb-link{display:flex;align-items:center;justify-content:flex-start;gap:.65rem;padding:.75rem 1.25rem;font-size:16px;color:var(--tx2);transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+.sb-link:hover,.sb-link.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.sb-link .ic{font-size:16px;min-width:20px;}
+.sb-user{margin-top:auto;padding:1rem 1.25rem;border-top:0.5px solid var(--bd);text-align:center;}
+.sb-user .name{font-size:16px;font-weight:500;color:var(--tx);}
+.sb-user .role{font-size:16px;color:var(--blue);}
+.main{background:var(--bg);padding:2rem;overflow-y:auto;}
+.page-title{font-family:'Amiri',serif;font-size:28px;color:var(--tx);margin-bottom:.25rem;}
+.page-sub{font-size:16px;color:var(--tx2);margin-bottom:2rem;}
+.content-section{background:#fff;border:0.5px solid var(--bd);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(10,36,99,0.04);}
+.section-title{font-size:20px;font-weight:600;color:var(--tx);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:.5rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1rem;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:17px;color:var(--tx2);margin-bottom:.4rem;font-weight:500;}
+.form-input{width:100%;padding:.75rem 1rem;border:0.5px solid var(--bd2);border-radius:8px;font-family:'Tajawal',sans-serif;font-size:17px;background:#fff;color:var(--tx);outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(10,36,99,0.08);}
+textarea.form-input{resize:vertical;min-height:80px;}
+.content-key{font-size:14px;color:var(--tx3);font-family:monospace;background:var(--bg3);padding:.2rem .5rem;border-radius:4px;}
+.help-text{font-size:15px;color:var(--tx3);margin-top:.3rem;}
+.preview-box{background:var(--bg3);border:0.5px solid var(--bd);border-radius:8px;padding:1rem;margin-top:.5rem;font-size:16px;color:var(--tx2);}
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:0.5px solid var(--bd);padding-bottom:0;}
+.tab-btn{padding:.55rem 1.1rem;font-size:16px;font-family:'Tajawal',sans-serif;background:transparent;border:none;cursor:pointer;color:var(--tx2);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all .2s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.lang-tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
+.lang-tab{padding:.4rem 1rem;border-radius:6px;font-size:15px;cursor:pointer;border:0.5px solid var(--bd2);background:#fff;color:var(--tx2);}
+.lang-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.lang-panel{display:none;}.lang-panel.active{display:block;}
+</style>
+{% endblock %}
+{% block body %}
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="ic">🎓</div>
+    <h2>أكاديمية الإنجليزية</h2>
+    <p>لوحة تحكم المعلم</p>
+  </div>
+  <div class="sb-section">رئيسي</div>
+  <a href="{{ url_for('teacher_dashboard') }}" class="sb-link"><span class="ic">🏠</span>لوحة التحكم</a>
+  <div class="sb-section">الدورات</div>
+  <a href="{{ url_for('teacher_courses') }}" class="sb-link"><span class="ic">📚</span>دوراتي</a>
+  <a href="{{ url_for('new_course') }}" class="sb-link"><span class="ic">➕</span>دورة جديدة</a>
+  <div class="sb-section">التواصل</div>
+  <a href="{{ url_for('teacher_live') }}" class="sb-link"><span class="ic">📡</span>الجلسات المباشرة</a>
+  <a href="{{ url_for('teacher_announcements') }}" class="sb-link"><span class="ic">📢</span>الإعلانات</a>
+  <a href="{{ url_for('teacher_students') }}" class="sb-link"><span class="ic">👥</span>الطلاب {% if pending > 0 %}<span class="badge badge-red" style="margin-right:auto;margin-left:0;font-size:12px;padding:2px 8px;">{{ pending }}</span>{% endif %}</a>
+  <div class="sb-section">الإعدادات</div>
+  <a href="{{ url_for('teacher_site_content') }}" class="sb-link active"><span class="ic">🎨</span>محتوى الموقع</a>
+  <div class="sb-section">الحساب</div>
+  <a href="{{ url_for('teacher_profile') }}" class="sb-link"><span class="ic">👤</span>ملفي الشخصي</a>
+  <a href="{{ url_for('index') }}" class="sb-link" target="_blank"><span class="ic">🌐</span>الصفحة العامة</a>
+  <a href="{{ url_for('logout') }}" class="sb-link"><span class="ic">🚪</span>تسجيل الخروج</a>
+  <div class="sb-user">
+    <div class="name">{{ current_user.name }}</div>
+    <div class="role">معلم</div>
+  </div>
+</div>
+<div class="main">
+  <div class="flash-list">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in msgs %}<div class="flash flash-{{ cat }}" style="margin-bottom:.75rem;">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+  </div>
+
+  <div class="page-title">🎨 إدارة محتوى الموقع</div>
+  <div class="page-sub">تعديل محتوى الصفحة الرئيسية والعامة للموقع</div>
+
+  <form method="POST" action="{{ url_for('teacher_site_content') }}">
+    <input type="hidden" name="action" value="bulk_update">
+
+    <div class="tabs">
+      <button type="button" class="tab-btn active" onclick="showTab('hero',this)">🏠 الهيدر الرئيسي</button>
+      <button type="button" class="tab-btn" onclick="showTab('features',this)">✨ المميزات</button>
+      <button type="button" class="tab-btn" onclick="showTab('sections',this)">📌 الأقسام</button>
+      <button type="button" class="tab-btn" onclick="showTab('quote',this)">💬 اقتباس</button>
+      <button type="button" class="tab-btn" onclick="showTab('footer',this)">🔻 الفوتر</button>
+    </div>
+
+    <!-- Hero Section -->
+    <div id="tab-hero" class="tab-content active">
+      <div class="content-section">
+        <div class="section-title">🏠 قسم الهيدر الرئيسي</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">وسم الهيدر (التاج) <span class="content-key">hero_tag</span></label>
+            <input type="text" name="content_hero_tag" class="form-input" value="{{ content_dict.hero_tag.value_ar if content_dict.hero_tag else 'منصة تعليمية احترافية' }}">
+            <div class="help-text">النص الصغير الذي يظهر أعلى العنوان</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">وسم الهيدر (إنجليزي) <span class="content-key">hero_tag_en</span></label>
+            <input type="text" name="content_hero_tag" class="form-input" value="{{ content_dict.hero_tag.value if content_dict.hero_tag else 'Professional Education Platform' }}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">العنوان الرئيسي (إنجليزي) <span class="content-key">hero_title_en</span></label>
+            <input type="text" name="content_hero_title_en" class="form-input" value="{{ content_dict.hero_title_en.value if content_dict.hero_title_en else 'Master Your English' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">العنوان الرئيسي (عربي) <span class="content-key">hero_title_ar</span></label>
+            <input type="text" name="content_hero_title_ar" class="form-input" value="{{ content_dict.hero_title_ar.value_ar if content_dict.hero_title_ar else 'أتقن الإنجليزية' }}">
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">وصف الهيدر <span class="content-key">hero_subtitle</span></label>
+            <textarea name="content_hero_subtitle" class="form-input" rows="3">{{ content_dict.hero_subtitle.value_ar if content_dict.hero_subtitle else 'منصة شاملة لتعلم الإنجليزية مع معلمين معتمدين، دروس تفاعلية، جلسات مباشرة، ومسارات تعليمية مخصصة.' }}</textarea>
+            <div class="help-text">النص التوضيحي أسفل العنوان</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">زر الدعوة الرئيسي <span class="content-key">hero_cta_primary</span></label>
+            <input type="text" name="content_hero_cta_primary" class="form-input" value="{{ content_dict.hero_cta_primary.value_ar if content_dict.hero_cta_primary else '✨ ابدأ رحلتك' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">زر الدعوة الثانوي <span class="content-key">hero_cta_secondary</span></label>
+            <input type="text" name="content_hero_cta_secondary" class="form-input" value="{{ content_dict.hero_cta_secondary.value_ar if content_dict.hero_cta_secondary else 'تصفح الدورات' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="tab-features" class="tab-content">
+      <div class="content-section">
+        <div class="section-title">✨ قسم المميزات</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">عنوان القسم <span class="content-key">features_title</span></label>
+            <input type="text" name="content_features_title" class="form-input" value="{{ content_dict.features_title.value_ar if content_dict.features_title else 'خدماتنا المميزة' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">وصف القسم <span class="content-key">features_subtitle</span></label>
+            <input type="text" name="content_features_subtitle" class="form-input" value="{{ content_dict.features_subtitle.value_ar if content_dict.features_subtitle else 'كل ما تحتاجه لرحلتك في تعلم الإنجليزية في مكان واحد' }}">
+          </div>
+        </div>
+      </div>
+
+      {% set default_titles = ['دروس مسجلة', 'جلسات مباشرة', 'شخصي ومجموعات', 'نحو وكتابة', 'دروس الأطفال', 'معلمون خبراء'] %}
+      {% set default_descs = [
+        'مكتبة واسعة من الدروس المسجلة في النحو، المفردات، المحادثة، والاستماع',
+        'جلسات أسبوعية مباشرة مع المعلمين للتدريب، الأسئلة، وتمارين المحادثة',
+        'جلسات فردية مع معلمك وجلسات جماعية للتحفيز',
+        'دورات نحو شاملة وورش كتابة لتطوير مهاراتك',
+        'جلسات مباشرة للأطفال لتعلم الإنجليزية بطريقة ممتعة',
+        'فريق من المعلمين المعتمدين بخبرة سنوات وشهادات دولية'
+      ] %}
+      {% for i in range(1, 7) %}
+      {% set feature_title_key = 'feature_' ~ i ~ '_title' %}
+      {% set feature_desc_key = 'feature_' ~ i ~ '_desc' %}
+      <div class="content-section">
+        <div class="section-title">✨ الميزة {{ i }}</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">العنوان <span class="content-key">feature_{{ i }}_title</span></label>
+            <input type="text" name="content_feature_{{ i }}_title" class="form-input" value="{{ content_dict[feature_title_key].value_ar if content_dict[feature_title_key] else default_titles[i-1] }}">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">الوصف <span class="content-key">feature_{{ i }}_desc</span></label>
+            <textarea name="content_feature_{{ i }}_desc" class="form-input" rows="2">{{ content_dict[feature_desc_key].value_ar if content_dict[feature_desc_key] else default_descs[i-1] }}</textarea>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Sections -->
+    <div id="tab-sections" class="tab-content">
+      <div class="content-section">
+        <div class="section-title">📌 عناوين الأقسام</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">عنوان قسم المميزات (كامل) <span class="content-key">features_title_full</span></label>
+            <input type="text" name="content_features_title_full" class="form-input" value="{{ content_dict.features_title_full.value_ar if content_dict.features_title_full else 'خدماتنا المميزة' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">عنوان قسم الدورات (كامل) <span class="content-key">courses_title_full</span></label>
+            <input type="text" name="content_courses_title_full" class="form-input" value="{{ content_dict.courses_title_full.value_ar if content_dict.courses_title_full else 'دوراتنا المتاحة' }}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">وصف قسم الدورات <span class="content-key">courses_subtitle</span></label>
+            <input type="text" name="content_courses_subtitle" class="form-input" value="{{ content_dict.courses_subtitle.value_ar if content_dict.courses_subtitle else 'برامج متنوعة لجميع المستويات من المبتدئ إلى المتقدم' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">عنوان قسم الجلسات (كامل) <span class="content-key">live_title_full</span></label>
+            <input type="text" name="content_live_title_full" class="form-input" value="{{ content_dict.live_title_full.value_ar if content_dict.live_title_full else 'الجلسات المباشرة' }}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">وصف قسم الجلسات <span class="content-key">live_subtitle</span></label>
+            <input type="text" name="content_live_subtitle" class="form-input" value="{{ content_dict.live_subtitle.value_ar if content_dict.live_subtitle else 'جلسات مجدولة أسبوعياً — سجل مقعدك وانضم من أي مكان' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">عنوان قسم الإعلانات (كامل) <span class="content-key">announcements_title_full</span></label>
+            <input type="text" name="content_announcements_title_full" class="form-input" value="{{ content_dict.announcements_title_full.value_ar if content_dict.announcements_title_full else 'آخر الأخبار' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote Section -->
+    <div id="tab-quote" class="tab-content">
+      <div class="content-section">
+        <div class="section-title">💬 قسم الاقتباس</div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">نص الاقتباس <span class="content-key">quote_text</span></label>
+            <textarea name="content_quote_text" class="form-input" rows="3">{{ content_dict.quote_text.value_ar if content_dict.quote_text else 'التعليم هو جواز السفر للمستقبل، فغداً يعود لمن يُعدّ له اليوم.' }}</textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">صاحب الاقتباس <span class="content-key">quote_author</span></label>
+            <input type="text" name="content_quote_author" class="form-input" value="{{ content_dict.quote_author.value_ar if content_dict.quote_author else 'مالكوم إكس' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="tab-footer" class="tab-content">
+      <div class="content-section">
+        <div class="section-title">🔻 قسم الفوتر</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">اسم العلامة التجارية <span class="content-key">footer_brand_name</span></label>
+            <input type="text" name="content_footer_brand_name" class="form-input" value="{{ content_dict.footer_brand_name.value_ar if content_dict.footer_brand_name else 'أكاديمية الإنجليزية' }}">
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">وصف العلامة التجارية <span class="content-key">footer_brand_desc</span></label>
+            <textarea name="content_footer_brand_desc" class="form-input" rows="2">{{ content_dict.footer_brand_desc.value_ar if content_dict.footer_brand_desc else 'منصة شاملة لتعلم الإنجليزية، تجمع بين التقليد والتكنولوجيا الحديثة' }}</textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">نص حقوق النشر <span class="content-key">footer_copyright</span></label>
+            <input type="text" name="content_footer_copyright" class="form-input" value="{{ content_dict.footer_copyright.value_ar if content_dict.footer_copyright else 'جميع الحقوق محفوظة © 2026 · أكاديمية الإنجليزية' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:sticky;bottom:0;background:var(--bg);padding:1rem 0;border-top:0.5px solid var(--bd);display:flex;gap:1rem;justify-content:center;z-index:100;">
+      <button type="submit" class="btn btn-primary" style="padding:1rem 3rem;font-size:18px;">💾 حفظ جميع التغييرات</button>
+      <a href="{{ url_for('index') }}" target="_blank" class="btn btn-ghost" style="padding:1rem 2rem;font-size:18px;">👁 معاينة الصفحة</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+{% endblock %}
