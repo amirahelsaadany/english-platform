@@ -5,5 +5,5 @@ flask-wtf==1.2.2
 werkzeug==3.0.3
 pillow==11.2.1
 gunicorn==22.0.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 firebase-admin==6.5.0
