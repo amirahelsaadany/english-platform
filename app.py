@@ -969,7 +969,7 @@ def init_db():
         db.create_all()
         if not User.query.filter_by(email='teacher@english.com').first():
             teacher = User(
-                name='Mr. Alaa Elsaadany',
+                name='Mr. John Smith',
                 email='teacher@english.com',
                 password=generate_password_hash('teacher123'),
                 role='teacher',
